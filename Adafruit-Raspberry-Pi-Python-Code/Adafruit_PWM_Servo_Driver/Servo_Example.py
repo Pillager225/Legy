@@ -11,7 +11,7 @@ import time
 pwm = PWM(0x40)
 # Note if you'd like more debug output you can instead run:
 #pwm = PWM(0x40, debug=True)
-channel = 1
+channel = 6
 increment = -5
 servoMin = 170  # Min pulse length out of 4096 (1ms for 60Hz)
 servoMax = 645  # Max pulse length out of 4096 (2.5ms for 60Hz)
@@ -41,7 +41,7 @@ while (True):
 #  print "max"
 #  time.sleep(1)
   pulse = 400
-  pwm.setPWM(channel, 0, pulse)
+  pwm.setPWM(channel, 9, pulse)
   while True:
     s = "Pulse is at " + str(pulse) + "hit enter to decrease by 5"
     i = raw_input(s)

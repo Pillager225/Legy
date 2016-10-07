@@ -123,35 +123,39 @@ class MyMovementHandler():
 			self.ETA = self.legs[self.BR].ETA
         
         def handleMovement(self):
-		i = 0
-		self.stand()
-        	while True:
-        		currentTime = time.clock()
-			if currentTime-self.lastTime >= self.ETA:
-			#	print self.state
-			#	s = "hit enter for next command"
-	                #	i = raw_input(s)
-        			if "GAIT" in self.state:
-        				if "FORWARD" in self.state:
-        					self.gait("FORWARD")
-        				elif "BACKWARD" in self.state:
-        					self.gait("BACKWARD")
-				elif "CREEP" in self.state:
-					if "FORWARD" in self.state:
-						self.creep("FORWARD")
-					elif "BACKWARD" in self.state:
-						self.creep("BACKWARD")
-				elif "STAND" in self.state:
-					self.stand()
-				elif "LEAP" in self.state:
-					if "FORWARD" in self.state:
-						self.leap("FORWARD")
-					elif "BACKWARD" in self.state:
-						self.leap("BACKWARD")
-				elif "TURN" in self.state:
-					if "LEFT" in self.state:
-						self.turn("LEFT")
-					else:
-						self.turn("RIGHT")
-        			self.lastTime = currentTime
+		try:
+			i = 0
+			self.stand()
+			self.state = "GAIT_FORWARD"
+	        	while True:
+	        		currentTime = time.clock()
+				if currentTime-self.lastTime >= self.ETA:
+					print self.state
+					s = "hit enter for next command"
+		                	i = raw_input(s)
+        				if "GAIT" in self.state:
+        					if "FORWARD" in self.state:
+        						self.gait("FORWARD")
+        					elif "BACKWARD" in self.state:
+        						self.gait("BACKWARD")
+					elif "CREEP" in self.state:
+						if "FORWARD" in self.state:
+							self.creep("FORWARD")
+						elif "BACKWARD" in self.state:
+							self.creep("BACKWARD")
+					elif "STAND" in self.state:
+						self.stand()
+					elif "LEAP" in self.state:
+						if "FORWARD" in self.state:
+							self.leap("FORWARD")
+						elif "BACKWARD" in self.state:
+							self.leap("BACKWARD")
+					elif "TURN" in self.state:
+						if "LEFT" in self.state:
+							self.turn("LEFT")
+						else:
+							self.turn("RIGHT")
+	        			self.lastTime = currentTime
+		except Exception as msg:
+			print msg
         

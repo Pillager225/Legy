@@ -4,6 +4,16 @@ import time
 import SocketServer
 from MyMovementHandler import MyMovementHandler
 
+def startLegy():
+	try:
+		movement = MyMovementHandler()
+		movement.state = "STAND" 
+		movement.handleMovement()
+#self.movement.state = "CREEP_FORWARD"
+	except Exception as msg:
+		print msg
+#self.movement.state = "GAIT_FORWARD"
+#self.movement.state = "LEAP_FORWARD"
 # copied from https://docs.python.org/2/library/socketserver.html
 class MyTCPHandler(SocketServer.BaseRequestHandler):
     """
@@ -58,9 +68,10 @@ class MyTCPHandler(SocketServer.BaseRequestHandler):
 
 if __name__ == "__main__":
     HOST, PORT = "", 12345
+    startLegy()
     # Create the server, binding to localhost on port 12345
-    server = SocketServer.TCPServer((HOST, PORT), MyTCPHandler)
+#    server = SocketServer.TCPServer((HOST, PORT), MyTCPHandler)
 
     # Activate the server; this will keep running until you
     # interrupt the program with Ctrl-C
-    server.serve_forever()
+ #   server.serve_forever()
