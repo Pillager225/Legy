@@ -15,9 +15,9 @@ import time
 
 class Leg:
 	FL = 0
-        FR = 1
-        BL = 2
-        BR = 3
+	FR = 1
+	BL = 2
+	BR = 3
 
 	HIP = 0
 	KNEE = 1

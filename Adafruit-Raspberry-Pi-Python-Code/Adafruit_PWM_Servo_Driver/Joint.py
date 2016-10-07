@@ -45,8 +45,8 @@ class Joint:
 			self.servoMin = 160
 			self.servoMax = 650
 		elif joint == "BLHIP":
-			self.servoMax = 635
-			self.servoMin = 180
+			self.servoMax = 650 #635
+			self.servoMin = 170 #180
 		elif joint == "BLKNEE":
 			self.servoMax = 650
 			self.servoMin = 170
