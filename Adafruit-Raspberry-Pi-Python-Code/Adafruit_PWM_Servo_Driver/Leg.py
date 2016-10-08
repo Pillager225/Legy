@@ -48,9 +48,10 @@ class Leg:
 			self.knee = Joint(1, "FLKNEE")
 			self.foot = Joint(2, "FLFOOT")
 			# TODO
-										#HIP	KNEE	FOOT
-		#	self.maxSineJointAng = 		[, 		, 		]
-		#	self.minSineJointAng = 		[, 		, 		]
+							#HIP	KNEE	FOOT
+			self.maxSineJointAng = 		[70, 	160, 	30]
+			self.minSineJointAng = 		[110, 	100, 	100]
+			#amplitude 			20	30	35
 		elif leg == self.FR:
 			self.hip = Joint(3, "FRHIP")
 			self.knee = Joint(4, "FRKNEE")
@@ -72,27 +73,37 @@ class Leg:
 										#HIP	KNEE	FOOT
 		#	self.maxSineJointAng = 		[, 		, 		]
 		#	self.minSineJointAng = 		[, 		, 		]
-		#self.jointBaseline = [	(self.maxSineJointAng[self.HIP]+self.minSineJointAng[self.HIP])/2.0, 
+		self.jointBaseline = [	(self.maxSineJointAng[self.HIP]+self.minSineJointAng[self.HIP])/2.0, 
 								(self.maxSineJointAng[self.KNEE]+self.minSineJointAng[self.KNEE])/2.0, 
 								(self.maxSineJointAng[self.FOOT]+self.minSineJointAng[self.FOOT])/2.0]
-		#self.jointAmplitude = [	(self.maxSineJointAng[self.HIP]-self.minSineJointAng[self.HIP])/2.0, 
-								(self.maxSineJointAng[self.KNEE]-self.minSineJointAng[self.KNEE])/2.0, 
-								(self.maxSineJointAng[self.FOOT]-self.minSineJointAng[self.FOOT])/2.0]
+		self.jointAmplitude = [	abs(self.maxSineJointAng[self.HIP]-self.minSineJointAng[self.HIP])/2.0, 
+								abs(self.maxSineJointAng[self.KNEE]-self.minSineJointAng[self.KNEE])/2.0, 
+								abs(self.maxSineJointAng[self.FOOT]-self.minSineJointAng[self.FOOT])/2.0]
 		self.sineCountMax = int((2*math.pi)/self.servoSpeed) 
 		self.state = "initialized"
 
 	def getServoAngle(self, joint):
-		#		((maxSineJointAng-minSineJointAng)/2.0)*math.sin(self.servoSpeed*self.sineCount)*180/math.pi+jointBaseline
+		#		(abs(maxSineJointAng-minSineJointAng)/2.0)*math.sin(self.servoSpeed*self.sineCount)*180/math.pi+jointBaseline
 		if self.leg == self.FL or self.leg == self.BR:
 			return self.jointAmplitude[joint]*math.sin(self.servoSpeed*self.sineCount)*57.2957795130824+self.jointBaseline[joint]
 		else:
 			return self.jointAmplitude[joint]*math.sin(self.servoSpeed*self.sineCount+math.pi)*57.2957795130824+self.jointBaseline[joint]
 
 	def sineRun(self):
-		for joint in range(0, self.FOOT):
-			self.getServoAngle(joint)
+		for joint in range(0, self.FOOT+1):
+			ang = self.getServoAngle(joint)
+			print self.jointAmplitude[joint]
+			if joint == self.HIP:
+				self.hip.moveToAngle(ang)
+			elif joint == self.KNEE:
+				self.knee.moveToAngle(ang)
+			elif joint == self.FOOT:
+				self.foot.moveToAngle(ang)
+	#		print ang
 										   # 120
+		print ""
 		self.sineCount = (self.sineCount+1)%self.sineCountMax
+		print self.sineCount
 
 	def raiseLeg(self):
 #		if self.leg == self.FL or self.leg == self.BR:
@@ -257,8 +268,11 @@ class Leg:
 
 if __name__ == '__main__':
 	l = Leg(0)
-	l.hip.moveToAngle(90)
+	#l.knee.moveToAngle(160)
+	#l.foot.moveToAngle(90)
 	while True:
-		s = "Next angle?"
-		i = raw_input(s)
-		l.hip.moveToAngle(i)
+		l.sineRun()
+		time.sleep(.1)
+	#	s = "Next angle?"
+	#	i = raw_input(s)
+	#	l.foot.moveToAngle(int(i))
