@@ -2,7 +2,7 @@
 
 from Adafruit_PWM_Servo_Driver import PWM
 from Joint import Joint
-import time
+import time, math
 
 # FL
 #	KNEE	servoMin = 170, servoMax = 650, 90 = 400	
@@ -29,31 +29,71 @@ class Leg:
 	foot = None
 	pwm = PWM(0x40)
 	leg = None
+	# notice that this variable is different from the one in Joint.py
+	servoSpeed = 0.0523598775598298 # rad/centisecond 3deg/centisecond 300deg/second (1/(joint.servoSpeed))/100
+	sineCount = 0
+	sineCountMax = 120 # also is set in self.__init__(leg)
+	jointBaseline = None
+	maxSineJointAng = None
+	minSineJointAng = None
+	jointAmplitude = None
 
 	# in seconds
 	ETA = 1
 	
-	def __init__(self, chs, leg):
+	def __init__(self, leg): # TODO fill out max and min lists
 		self.leg = leg
 		if leg == self.FL:
-			self.hip = Joint(chs[0], "FLHIP")
-			self.knee = Joint(chs[1], "FLKNEE")
-			self.foot = Joint(chs[2], "FLFOOT")
+			self.hip = Joint(0, "FLHIP")
+			self.knee = Joint(1, "FLKNEE")
+			self.foot = Joint(2, "FLFOOT")
+			# TODO
+										#HIP	KNEE	FOOT
+			self.maxSineJointAng = 		[, 		, 		]
+			self.minSineJointAng = 		[, 		, 		]
 		elif leg == self.FR:
-			self.hip = Joint(chs[0], "FRHIP")
-			self.knee = Joint(chs[1], "FRKNEE")
-			self.foot = Joint(chs[2], "FRFOOT")
+			self.hip = Joint(3, "FRHIP")
+			self.knee = Joint(4, "FRKNEE")
+			self.foot = Joint(5, "FRFOOT")
+										#HIP	KNEE	FOOT
+			self.maxSineJointAng = 		[, 		, 		]
+			self.minSineJointAng = 		[, 		, 		]
 		elif leg == self.BR:
-			self.hip = Joint(chs[0], "BRHIP")
-			self.knee = Joint(chs[1], "BRKNEE")
-			self.foot = Joint(chs[2], "BRFOOT")
+			self.hip = Joint(6, "BRHIP")
+			self.knee = Joint(7, "BRKNEE")
+			self.foot = Joint(8, "BRFOOT")
+										#HIP	KNEE	FOOT
+			self.maxSineJointAng = 		[, 		, 		]
+			self.minSineJointAng = 		[, 		, 		]
 		elif leg == self.BL:
-			self.hip = Joint(chs[0], "BLHIP")
-			self.knee = Joint(chs[1], "BLKNEE")
-			self.foot = Joint(chs[2], "BLFOOT")
+			self.hip = Joint(9, "BLHIP")
+			self.knee = Joint(10, "BLKNEE")
+			self.foot = Joint(11, "BLFOOT")
+										#HIP	KNEE	FOOT
+			self.maxSineJointAng = 		[, 		, 		]
+			self.minSineJointAng = 		[, 		, 		]
+		self.jointBaseline = [	(self.maxSineJointAng[self.HIP]+self.minSineJointAng[self.HIP])/2.0, 
+								(self.maxSineJointAng[self.KNEE]+self.minSineJointAng[self.KNEE])/2.0, 
+								(self.maxSineJointAng[self.FOOT]+self.minSineJointAng[self.FOOT])/2.0]
+		self.jointAmplitude = [	(self.maxSineJointAng[self.HIP]-self.minSineJointAng[self.HIP])/2.0, 
+								(self.maxSineJointAng[self.KNEE]-self.minSineJointAng[self.KNEE])/2.0, 
+								(self.maxSineJointAng[self.FOOT]-self.minSineJointAng[self.FOOT])/2.0]
+		self.sineCountMax = int((2*math.pi)/self.servoSpeed) 
 		self.state = "initialized"
 
-	
+	def getServoAngle(self, joint):
+		#		((maxSineJointAng-minSineJointAng)/2.0)*math.sin(self.servoSpeed*self.sineCount)*180/math.pi+jointBaseline
+		if self.leg == self.FL or self.leg == self.BR:
+			return self.jointAmplitude[joint]*math.sin(self.servoSpeed*self.sineCount)*57.2957795130824+self.jointBaseline[joint]
+		else:
+			return self.jointAmplitude[joint]*math.sin(self.servoSpeed*self.sineCount+math.pi)*57.2957795130824+self.jointBaseline[joint]
+
+	def sineRun(self):
+		for joint in range(0, self.FOOT):
+			self.getServoAngle(joint)
+										   # 120
+		self.sineCount = (self.sineCount+1)%self.sineCountMax
+
 	def raiseLeg(self):
 #		if self.leg == self.FL or self.leg == self.BR:
 		self.hip.moveToAngle(90)

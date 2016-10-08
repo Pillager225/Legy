@@ -5,7 +5,4 @@ A quaduped bot
 
 Prerequesite packages:
 	apt-get:
-		python-pip python-dev python-cffi
-
-	pip:
-		smbus-cffi
+		python-pip python-dev python-smbus i2c-tools

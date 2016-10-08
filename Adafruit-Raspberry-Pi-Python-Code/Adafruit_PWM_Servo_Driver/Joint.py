@@ -7,7 +7,7 @@ class Joint:
 	pwm = PWM(0x40)
 	servoMin = 0
 	servoMax = 0
-	servoSpeed = .2/60
+	servoSpeed = .00333333333333333 # .2/60 sec/deg | .2/60 at 4v, .16/60 at 6v Tower Pro MG995 
 	curAngle = 90 
 	leg = 0
 
@@ -59,11 +59,11 @@ class Joint:
 		return int(round((val-startLow)*(endHigh-endLow)/(startHigh-startLow)+endLow))
 
 	# angle from 0-180
-        def moveToAngle(self, angle):
-#         	 s = "hit enter for next command"
-#                i = raw_input(s)
-                tmpInt = self.servoSpeed*abs(angle-self.curAngle)
-                if self.ETASet == False or self.ETA < tmpInt:
+	def moveToAngle(self, angle):
+	#         	 s = "hit enter for next command"
+	#                i = raw_input(s)
+		tmpInt = self.servoSpeed*abs(angle-self.curAngle)
+		if self.ETASet == False or self.ETA < tmpInt:
                         self.ETA = tmpInt
 		if self.leg == "FR" or self.leg == "BL":
                		pulse = self.reMap(angle, 180, 0, self.servoMin, self.servoMax)

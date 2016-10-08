@@ -14,7 +14,7 @@ class MovementController(Process):
 	BL = 2
 	BR = 3
 
-	legs = [Leg([0, 1, 2], FL), Leg([3, 4, 5], FR), Leg([6, 7, 8], BL), Leg([9, 10, 11], BR)]
+	legs = [Leg(FL), Leg(FR), Leg(BL), Leg(BR)]
 	ETASet = False
 	ETA = .1 # in seconds
 	lastTime = 0
@@ -27,6 +27,7 @@ class MovementController(Process):
 
 	pipe = None
 	controllerQueue = None
+	sineGo = False
 
 	def __init__(self):
 		super(MovementController, self).__init__()
@@ -134,17 +135,22 @@ class MovementController(Process):
 			i = 0
 			self.stand()
 			self.state = "GAIT_FORWARD"
-	        	while True:
-	        		currentTime = time.clock()
-				if currentTime-self.lastTime >= self.ETA:
+			while True:
+				currentTime = time.clock()
+				if "SINE_RUN" in self.state:
+					while self.sineGo:
+						for leg in range(0, self.BR):
+							self.legs[leg].sineRun()
+						time.sleep(.01) # centisecond so that Leg.getServoAngle(joint) is smooth because of Leg.servoSpeed
+				elif currentTime-self.lastTime >= self.ETA:
 					print self.state
 					s = "hit enter for next command"
-		                	i = raw_input(s)
-        				if "GAIT" in self.state:
-        					if "FORWARD" in self.state:
-        						self.gait("FORWARD")
-        					elif "BACKWARD" in self.state:
-        						self.gait("BACKWARD")
+					i = raw_input(s)
+					if "GAIT" in self.state:
+						if "FORWARD" in self.state:
+							self.gait("FORWARD")
+						elif "BACKWARD" in self.state:
+							self.gait("BACKWARD")
 					elif "CREEP" in self.state:
 						if "FORWARD" in self.state:
 							self.creep("FORWARD")
@@ -162,7 +168,7 @@ class MovementController(Process):
 							self.turn("LEFT")
 						else:
 							self.turn("RIGHT")
-	        			self.lastTime = currentTime
+				self.lastTime = currentTime
 		except Exception as msg:
 			print "MovementController"
 			print msg
