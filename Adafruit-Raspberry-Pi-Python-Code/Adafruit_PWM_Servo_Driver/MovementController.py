@@ -8,22 +8,33 @@ from Adafruit_PWM_Servo_Driver import PWM
 import time
 from Leg import Leg
 
-class MyMovementHandler():
-        FL = 0
-        FR = 1
-        BL = 2
-        BR = 3
-        
-        legs = [Leg([0, 1, 2], FL), Leg([3, 4, 5], FR), Leg([6, 7, 8], BL), Leg([9, 10, 11], BR)]
-        ETASet = False
-        ETA = .1 # in seconds
-        lastTime = 0
-        state = -1
-        
-        gaitCounter = 0
-        creepCounter = 0
+class MovementController(Process):
+	FL = 0
+	FR = 1
+	BL = 2
+	BR = 3
+
+	legs = [Leg([0, 1, 2], FL), Leg([3, 4, 5], FR), Leg([6, 7, 8], BL), Leg([9, 10, 11], BR)]
+	ETASet = False
+	ETA = .1 # in seconds
+	lastTime = 0
+	state = -1
+
+	gaitCounter = 0
+	creepCounter = 0
 	turnCounter = 0
 	left = True
+
+	pipe = None
+	controllerQueue = None
+
+	def __init__(self):
+		super(MovementController, self).__init__()
+		for key in kwargs:
+			if key == 'pipe':
+				self.pipe = kwargs[key]
+			elif key == 'controllerQueue':
+				self.controllerQueue = kwargs[key]
 
 	def turn(self, direction):
 		if direction == "LEFT":
@@ -47,9 +58,9 @@ class MyMovementHandler():
 		if self.turnCounter > 2:
 			self.turnCounter = 0
 
-        def gait(self, direction):
+	def gait(self, direction):
 		print self.gaitCounter
-                if self.gaitCounter == 0:
+		if self.gaitCounter == 0:
 			if self.left:
 				self.legs[self.FL].raiseLeg()
 				self.legs[self.FL].pushOut()
@@ -58,10 +69,10 @@ class MyMovementHandler():
 				self.legs[self.FR].pushOut()
 			self.legs[self.BR].raiseLeg()
 			self.legs[self.BL].raiseLeg()
-                elif self.gaitCounter == 1:
+        elif self.gaitCounter == 1:
 			self.legs[self.BR].pullIn()
 			self.legs[self.BL].pullIn()
-                elif self.gaitCounter == 2:
+		elif self.gaitCounter == 2:
 			if self.left:
 				self.legs[self.FL].lowerLeg()
 				self.legs[self.FL].pullInFront()
@@ -81,13 +92,9 @@ class MyMovementHandler():
 		if self.ETA < self.legs[self.FL].ETA:
 			self.ETA = self.legs[self.FL].ETA
         	if(direction == "FORWARD"):
-        		self.gaitCounter += 1
+        		self.gaitCounter = (self.gaitCounter+1)%3
         	elif(direction == "BACKWARD"):
-        		self.gaitCounter -= 1
-                if self.gaitCounter > 2:
-                	self.gaitCounter = 0
-        	elif self.gaitCounter < 0:
-        		self.gaitCounter = 2
+        		self.gaitCounter = (self.gaitCounter-1)%3
         
         def creep(self, direction):
 		print self.creepCounter
@@ -122,7 +129,7 @@ class MyMovementHandler():
 		if self.ETA < self.legs[self.BR].ETA:
 			self.ETA = self.legs[self.BR].ETA
         
-        def handleMovement(self):
+	def run(self):
 		try:
 			i = 0
 			self.stand()
@@ -157,5 +164,5 @@ class MyMovementHandler():
 							self.turn("RIGHT")
 	        			self.lastTime = currentTime
 		except Exception as msg:
+			print "MovementController"
 			print msg
-        
