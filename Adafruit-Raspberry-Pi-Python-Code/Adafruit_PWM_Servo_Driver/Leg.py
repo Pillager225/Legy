@@ -49,33 +49,33 @@ class Leg:
 			self.foot = Joint(2, "FLFOOT")
 			# TODO
 										#HIP	KNEE	FOOT
-			self.maxSineJointAng = 		[, 		, 		]
-			self.minSineJointAng = 		[, 		, 		]
+		#	self.maxSineJointAng = 		[, 		, 		]
+		#	self.minSineJointAng = 		[, 		, 		]
 		elif leg == self.FR:
 			self.hip = Joint(3, "FRHIP")
 			self.knee = Joint(4, "FRKNEE")
 			self.foot = Joint(5, "FRFOOT")
 										#HIP	KNEE	FOOT
-			self.maxSineJointAng = 		[, 		, 		]
-			self.minSineJointAng = 		[, 		, 		]
+		#	self.maxSineJointAng = 		[, 		, 		]
+		#	self.minSineJointAng = 		[, 		, 		]
 		elif leg == self.BR:
 			self.hip = Joint(6, "BRHIP")
 			self.knee = Joint(7, "BRKNEE")
 			self.foot = Joint(8, "BRFOOT")
 										#HIP	KNEE	FOOT
-			self.maxSineJointAng = 		[, 		, 		]
-			self.minSineJointAng = 		[, 		, 		]
+		#	self.maxSineJointAng = 		[, 		, 		]
+		#	self.minSineJointAng = 		[, 		, 		]
 		elif leg == self.BL:
 			self.hip = Joint(9, "BLHIP")
 			self.knee = Joint(10, "BLKNEE")
 			self.foot = Joint(11, "BLFOOT")
 										#HIP	KNEE	FOOT
-			self.maxSineJointAng = 		[, 		, 		]
-			self.minSineJointAng = 		[, 		, 		]
-		self.jointBaseline = [	(self.maxSineJointAng[self.HIP]+self.minSineJointAng[self.HIP])/2.0, 
+		#	self.maxSineJointAng = 		[, 		, 		]
+		#	self.minSineJointAng = 		[, 		, 		]
+		#self.jointBaseline = [	(self.maxSineJointAng[self.HIP]+self.minSineJointAng[self.HIP])/2.0, 
 								(self.maxSineJointAng[self.KNEE]+self.minSineJointAng[self.KNEE])/2.0, 
 								(self.maxSineJointAng[self.FOOT]+self.minSineJointAng[self.FOOT])/2.0]
-		self.jointAmplitude = [	(self.maxSineJointAng[self.HIP]-self.minSineJointAng[self.HIP])/2.0, 
+		#self.jointAmplitude = [	(self.maxSineJointAng[self.HIP]-self.minSineJointAng[self.HIP])/2.0, 
 								(self.maxSineJointAng[self.KNEE]-self.minSineJointAng[self.KNEE])/2.0, 
 								(self.maxSineJointAng[self.FOOT]-self.minSineJointAng[self.FOOT])/2.0]
 		self.sineCountMax = int((2*math.pi)/self.servoSpeed) 
@@ -254,3 +254,11 @@ class Leg:
 		self.hip.moveToAngle(40)
 		self.DTA = self.hip.ETA
 		self.state = "tucked"
+
+if __name__ == '__main__':
+	l = Leg(0)
+	l.hip.moveToAngle(90)
+	while True:
+		s = "Next angle?"
+		i = raw_input(s)
+		l.hip.moveToAngle(i)
