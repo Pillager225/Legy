@@ -61,13 +61,13 @@ class Leg:
 			self.foot = Joint(11, "BLFOOT")
 		if leg == self.FL or leg == self.FR:
 							#HIP	KNEE	FOOT
-			self.maxSineJointAng = 		[90, 	160, 	100]
-			self.minSineJointAng = 		[80, 	100, 	30]
+			self.maxSineJointAng = 		[90, 	160, 	140] #100
+			self.minSineJointAng = 		[80, 	100, 	30] # 30
 			# baseline =			 85	130	65
 		elif leg == self.BL or leg == self.BR:
 							#HIP	KNEE	FOOT
-			self.maxSineJointAng = 		[100, 	80, 	150]
-			self.minSineJointAng = 		[90, 	20, 	80]
+			self.maxSineJointAng = 		[100, 	80, 	150] #150
+			self.minSineJointAng = 		[90, 	20, 	40] # 80
 			# baseline =			 95 	50	115
 		# in degrees
 		self.jointBaseline = [	(self.maxSineJointAng[self.HIP]+self.minSineJointAng[self.HIP])/2.0, 
