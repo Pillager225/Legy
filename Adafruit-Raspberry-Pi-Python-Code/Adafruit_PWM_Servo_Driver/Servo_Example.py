@@ -11,7 +11,7 @@ import time
 pwm = PWM(0x40)
 # Note if you'd like more debug output you can instead run:
 #pwm = PWM(0x40, debug=True)
-channel = 6
+channel = 15 
 increment = -5
 servoMin = 170  # Min pulse length out of 4096 (1ms for 60Hz)
 servoMax = 645  # Max pulse length out of 4096 (2.5ms for 60Hz)
